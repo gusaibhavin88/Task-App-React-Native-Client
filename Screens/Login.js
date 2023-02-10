@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -10,33 +10,150 @@ import {
 } from 'react-native';
 import {Spacing} from '../Data';
 import Logo from '../Images/Logo.png';
+import {useDispatch, useSelector} from 'react-redux';
+import {LoginAcc, Register} from '../Redux/Action';
+import {launchImageLibrary} from 'react-native-image-picker';
+import Profile from '../Images/profile.png';
 
-export default Login = ({navigation}) => {
+export default Login = ({navigation, route}) => {
+
+  const {user}  = useSelector((state) => state.auth)
+  const dispatch = useDispatch();
+// -------------------------------------------------------------
+
+
   const [signup, setsignup] = useState(false);
+  const [logwrongpass, setlogwrongpass] = useState(false);
+  const [logemail, setlogemail] = useState('');
+
+// -------------------------------------------------------------
+
+  const [avatar, setavatar] = useState('');
+  const [email, setemail] = useState('');
+  const [password, setpassword] = useState('');
+  const [confirmpassword, setconfirmpassword] = useState('');
+  const [name, setname] = useState('');
+  const [wrongpass, setwrongpass] = useState(false);
+
+
+  const [logpassword, setlogpassword] = useState('');
+
+
+  const registerHandle = () => {
+    const myform = new FormData();
+    myform.append('email', email);
+    myform.append('name', name);
+    myform.append('password', password);
+    myform.append('avatar', {
+      uri: avatar.uri,
+      type: avatar.type,
+      name: avatar.fileName,
+    });
+    if (email === '' || name === '' || password === '' || avatar === '') {
+      alert('Please fill all the Details');
+    } else {
+      if (password.length < 8 || password !== confirmpassword) {
+        setwrongpass(true);
+      } else {
+        dispatch(Register(myform));
+          navigation.navigate("Otp")
+      }
+    }
+  };
+// -------------------------------------------------------------
+  
+
+  const loginHandle = () => {
+
+      const myform = {
+        'email': logemail,
+        'password': logpassword
+      }
+      if (logemail === '' || logpassword === '' ) {
+        alert('Please fill all the Details');
+      }else{
+          dispatch(LoginAcc(myform));
+    } 
+  };
+// -------------------------------------------------------------
+
+  const Gallary = () =>
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+        maxHeight: 200,
+        maxWidth: 200,
+      },
+      response => {
+        console.log(response);
+        setavatar(response.assets[0]);
+        console.log(avatar);
+      },
+    );
+
+// -------------------------------------------------------------
+useEffect(() => {
+  if(user){
+    setlogwrongpass(true)
+  }
+},[])
 
   return (
     <View style={styles.mainscreen}>
       <Image source={Logo} style={styles.logo} />
       {signup ? (
         <View style={styles.inputperent}>
+          <Image
+            source={avatar ? avatar : Profile}
+            style={{
+              width: 50,
+              height: 50,
+              alignSelf: 'center',
+              marginVertical: 10,
+            }}></Image>
+          <TouchableOpacity>
+            <Text
+              style={{
+                alignSelf: 'center',
+                marginVertical: 10,
+                color: '#4096F6',
+              }}
+              onPress={Gallary}>
+              Upload Image
+            </Text>
+          </TouchableOpacity>
           <TextInput
             style={styles.input}
+            value={email}
+            onChangeText={setemail}
             placeholder="Type email address "></TextInput>
-          <TextInput style={styles.input} placeholder="First Name"></TextInput>
-          <TextInput style={styles.input} placeholder="Last Name"></TextInput>
-          <TextInput style={styles.input} placeholder="Password"></TextInput>
           <TextInput
             style={styles.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={setname}></TextInput>
+          <TextInput
+            style={styles.input}
+            value={password}
+            onChangeText={setpassword}
+            placeholder="Password"></TextInput>
+          <TextInput
+            style={styles.input}
+            value={confirmpassword}
+            onChangeText={setconfirmpassword}
             placeholder="Confirm Password"></TextInput>
-          <TextInput
-            style={styles.input}
-            placeholder="Contact Number"></TextInput>
-          <Text style={{display: 'none', marginTop: 10, color: 'red'}}>
+          <Text
+            style={[
+              {marginTop: 10, color: 'red'},
+              wrongpass ? {display: 'flex'} : {display: 'none'},
+            ]}>
             {' '}
-            * Invalid username or password
+            * Invalid password or password is not matching
           </Text>
           <TouchableOpacity
-            style={{marginTop: Spacing * 3, alignItems: 'center'}}>
+            style={{marginTop: Spacing * 3, alignItems: 'center'}}
+            onPress={registerHandle}>
             <Text
               style={{
                 backgroundColor: '#42B72A',
@@ -52,23 +169,42 @@ export default Login = ({navigation}) => {
               Sign up
             </Text>
           </TouchableOpacity>
-
-          <Text style={{textAlign: 'center', marginTop: 15, color: '#4096F6'}} onPress = {() => setsignup(false)}>
+          <Text
+            style={{textAlign: 'center', marginTop: 15, color: '#4096F6'}}
+            onPress={() => setsignup(false)}>
             Already logged in click here
           </Text>
         </View>
-      ) : (
+      ) : 
+
+      // --------------------------------------------------------------------
+      
+      (
         <View style={styles.inputperent}>
           <TextInput
             style={styles.input}
+            value ={logemail}
+            onChangeText={setlogemail}
             placeholder="Email address "></TextInput>
-          <TextInput style={styles.input} placeholder="Password"></TextInput>
-          <Text style={{display: 'none', marginTop: 10, color: 'red'}}>
+          <TextInput
+            style={styles.input}
+            value ={logpassword}
+            onChangeText={setlogpassword}
+            placeholder="Password"
+            secureTextEntry={true}
+            autoCorrect={false}
+            activeOutlineColor="#326A81"></TextInput>
+          <Text
+            style={[
+              {marginTop: 10, color: 'red'},
+              !logwrongpass ? {display: 'none'} : '',
+            ]}>
             {' '}
             * Invalid username or password
           </Text>
           <TouchableOpacity
-            style={{marginTop: Spacing * 3, alignItems: 'center'}}>
+            style={{marginTop: Spacing * 3, alignItems: 'center'}}
+            onPress={loginHandle}>
             <Text
               style={{
                 backgroundColor: '#1877F2',

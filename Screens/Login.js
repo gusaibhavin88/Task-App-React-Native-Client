@@ -17,7 +17,7 @@ import Profile from '../Images/profile.png';
 
 export default Login = ({navigation, route}) => {
 
-  const {user}  = useSelector((state) => state.auth)
+  const {user , message , error}  = useSelector((state) => state.auth)
   const dispatch = useDispatch();
 // -------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default Login = ({navigation, route}) => {
   const [logpassword, setlogpassword] = useState('');
 
 
-  const registerHandle = () => {
+  const registerHandle = async() => {
     const myform = new FormData();
     myform.append('email', email);
     myform.append('name', name);
@@ -56,7 +56,6 @@ export default Login = ({navigation, route}) => {
         setwrongpass(true);
       } else {
         dispatch(Register(myform));
-          navigation.navigate("Otp")
       }
     }
   };
@@ -93,11 +92,21 @@ export default Login = ({navigation, route}) => {
     );
 
 // -------------------------------------------------------------
+// useEffect(() => {
+//   if(user){
+//     setlogwrongpass(true)
+//   }
+// },[])
+
 useEffect(() => {
-  if(user){
-    setlogwrongpass(true)
+  if(error){
+    alert(error)
+    dispatch({ type: "clearError" })
   }
-},[])
+
+},[dispatch,error])
+
+// console.log(error)
 
   return (
     <View style={styles.mainscreen}>

@@ -3,8 +3,12 @@ import { authReducer } from './Reducer';
 
 const store = configureStore({
   reducer: {
-    auth: authReducer
+    auth: authReducer,
     // message: messageReducer,
+    // middleware: (getDefaultMiddleware) =>
+    // getDefaultMiddleware({
+    //   serializableCheck: false,
+    // }),
   },
 });
 

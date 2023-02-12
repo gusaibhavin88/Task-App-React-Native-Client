@@ -7,14 +7,37 @@ import {
   Button,
   TextInput,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {Spacing} from '../Data';
 import Add from '../Images/add.png';
+import {Changeaccountpassword} from '../Redux/Action';
+import {useDispatch} from 'react-redux';
+import Backarrow from '../Images/backarrow.png';
 
-export default function Changepass() {
+
+
+export default function Changepass({navigation}) {
+  const [oldPassword, setoldPassword] = useState('');
+  const [newPassword, setnewPassword] = useState('');
+  const dispatch = useDispatch();
+
+  const changePass = async () => {
+    const change = {
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    };
+    await dispatch(Changeaccountpassword(change));
+  };
+
   return (
     <View
       style={{flex: 1, padding: Spacing, alignItems: 'center', gap: Spacing}}>
+        <View style = {{flexDirection : "row" , width : "100%"}}>
+        <TouchableOpacity onPress={() => navigation.navigate('Viewtask')}>
+          <Image   source={Backarrow} style={styles.backimage}></Image>
+        </TouchableOpacity>
+        </View>
+
       <Text
         style={{
           textAlign: 'center',
@@ -26,10 +49,16 @@ export default function Changepass() {
         Change Password
       </Text>
 
-      <TextInput style={styles.textin} placeholder="Old password"></TextInput>
-      <TextInput style={styles.textin} placeholder="New Password"></TextInput>
+      <TextInput
+        style={styles.textin}
+        onChangeText={setoldPassword}
+        placeholder="Old password"></TextInput>
+      <TextInput
+        style={styles.textin}
+        onChangeText={setnewPassword}
+        placeholder="New Password"></TextInput>
       <View style={styles.updatebutton}>
-        <Button color={'#1877F2'} title="Update"></Button>
+        <Button color={'#1877F2'} title="Update" onPress={changePass}></Button>
       </View>
     </View>
   );
@@ -59,5 +88,10 @@ const styles = StyleSheet.create({
     color: '#333F4D',
     fontWeight: '400',
     marginTop: 20,
+  },
+  
+  backimage: {
+    height: 20,
+    width: 25,
   },
 });

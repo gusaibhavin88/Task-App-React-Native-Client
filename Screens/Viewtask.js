@@ -12,38 +12,50 @@ import {Spacing} from '../Data';
 import Tasklogo from '../Images/Tasklogo.png';
 import Search from '../Images/Search.png';
 import Add from '../Images/add.png';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+import Delete from "../Images/delete.jpg"
+import { deleteTaskItem, Loaduser } from '../Redux/Action';
 
-// const [userdata , setuserdata] = useState(user)
 
-export default Viewtask = ({navigation,route}) => {
+export default Viewtask = ({navigation, route}) => {
+  const dispatch = useDispatch();
+  const {user,error,message} = useSelector(state => state.auth);
+  const [Profileimage, setProfileimage] = useState('');
+  const [userdata , setuserdata] = useState(user)
+  const [avatar,setavatar] = useState(user?.avatar.url)
+  const [deletebutton,setdeletebutton] = useState(false)
+  console.log(user)
 
-  const dispatch = useDispatch()
-  const {user} = useSelector(state => state.auth)
+const deletetask = async(taskId) => {
+ await dispatch(deleteTaskItem(taskId))
 
-  const [Profileimage,setProfileimage] = useState("")
-console.log(user)
-  
+//  dispatch(Loaduser())
+
+ console.log(typeof(taskId))
+ console.log(taskId)
+}
+
 useEffect(() => {
-  if(user) {
-    setProfileimage(user?.avatar.url
-      )
+  if(error){
+    alert(error)
+    dispatch({ type: "clearError" })
   }
-},[dispatch,user])
+
+},[dispatch,error])
 
   return (
     <View style={styles.mainview}>
-      <TouchableOpacity  onPress ={()=>navigation.navigate("Profile")}>
+      <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
         <Image
-          source= {Tasklogo}
+          source={user?{uri : avatar} : avatar} 
           style={{
-            height: 50,
-            width: 50,
+            height: 40,
+            borderRadius :30 ,
+            width: 40,
             position: 'absolute',
             right: 0,
             top: 10,
-           
           }}></Image>
       </TouchableOpacity>
       <Image style={styles.tasklogo} source={Tasklogo} />
@@ -59,7 +71,7 @@ useEffect(() => {
           alignItems: 'center',
           justifyContent: 'space-evenly',
         }}>
-          <Image source={Search} style ={styles.search} ></Image>
+        <Image source={Search} style={styles.search}></Image>
         <TextInput
           style={{
             width: '70%',
@@ -69,21 +81,21 @@ useEffect(() => {
       </TouchableOpacity>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.taskview}>
-          {/* {
-user.task.map((data) => { */}
-  <TouchableOpacity style={styles.box}>
-  <Text style={{fontWeight: 'bold', fontSize: 18}}>dhdhd</Text>
-  <Text>
-    Lohghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-  </Text>
-</TouchableOpacity>
-{/* })
-
-
-
-
-          } */}
-
+          {user && user.task.map(data => {
+            return(
+              <TouchableOpacity style={styles.box} key ={data._id} delayLongPress = {2000}  onLongPress= {() => setdeletebutton(!deletebutton)}>
+                <TouchableOpacity  style ={[styles.pdelete]} onPress ={() => deletetask(Number(data._id))}>
+                <Image source={Delete}  style={[deletebutton? {display : "flex"} : {display : "none"},styles.delete]}></Image> 
+                </TouchableOpacity>
+              <Text style={{fontWeight: 'bold', fontSize: 18}}>
+                {data.title}
+              </Text>
+              <Text style={{marginTop : Spacing}}>
+                {data.description}
+              </Text>
+            </TouchableOpacity>
+            )
+          })}
         </View>
       </ScrollView>
       <TouchableOpacity
@@ -112,17 +124,18 @@ const styles = StyleSheet.create({
     width: 30,
   },
   taskview: {
-    justifyContent: 'space-evenly',
+    justifyContent: "space-evenly",
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: Spacing * 1,
   },
   box: {
     backgroundColor: '#FFFFFF',
-    width: '40%',
+    width: '45%',
     marginTop: Spacing * 2,
     borderRadius: Spacing * 2,
-    padding: 10,
+    padding: Spacing,
+
   },
   addiconperent: {
     position: 'absolute',
@@ -132,5 +145,19 @@ const styles = StyleSheet.create({
   addicon: {
     height: 80,
     width: 80,
+  },
+  delete: {
+    height: 35,
+    width: 35,
+    position : "absolute",
+    right : 0,
+    top : 0
+  },
+  pdelete: {
+    height: 35,
+    width: 35,
+    position : "absolute",
+    right : 10,
+    top : 10
   },
 });

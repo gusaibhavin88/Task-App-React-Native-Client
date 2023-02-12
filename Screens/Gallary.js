@@ -13,6 +13,14 @@ launchImageLibrary(
   response => {
     console.log(response);
     setavatar(response.assets);
-    console.log(avatar);
   },
 );
+// export const Gallary = () =>{
+//   ImagePicker.openPicker({
+//     width: 300,
+//     height: 400,
+//     cropping: true
+//   }).then(image => {
+//     setavatar(image);
+//   });
+// }

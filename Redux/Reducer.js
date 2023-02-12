@@ -81,6 +81,66 @@ export const authReducer = createReducer(
       state.isAuthenticated = false;
       state.error = action.payload;
     },
+
+    ADDTASK_STARTED: (state) => {
+      state.loading = true;
+    },
+    ADDTASK_SUCCESS: (state , action) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.message = action.payload.message;
+    },
+    ADDTASK_FAIL: (state,action) => {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.error = action.payload;
+    },
+
+    CHANGE_STARTED: (state) => {
+      state.loading = true;
+    },
+    CHANGE_SUCCESS: (state , action) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.message = action.payload.message;
+    },
+    CHANGE_FAIL: (state,action) => {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.error = action.payload;
+    },
+
+    UPDATEPROFILE_STARTED: (state) => {
+      state.loading = true;
+    },
+    UPDATEPROFILE_SUCCESS: (state , action) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.message = action.payload.message;
+    },
+    UPDATEPROFILE_FAIL: (state,action) => {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.error = action.payload;
+    },
+
+    DELETE_STARTED: (state) => {
+      state.loading = true;
+    },
+    DELETE_SUCCESS: (state , action) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.message = action.payload.message;
+    },
+    DELETE_FAIL: (state,action) => {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.error = action.payload;
+    },
   },
 // -------------------------------------------------------
 );

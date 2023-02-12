@@ -10,7 +10,6 @@ import Viewtask from './Screens/Viewtask';
 import { useDispatch } from 'react-redux';
 import { Loaduser } from './Redux/Action';
 import { Load } from './Screens/Load';
-import { load } from 'npm';
 import Otp from './Screens/Otp';
 
 const Stack = createNativeStackNavigator();
@@ -18,28 +17,28 @@ const Stack = createNativeStackNavigator();
 export default Main = () => {
   const isAuthenticated  =  useSelector((state) => state.auth.isAuthenticated)
   const loading  = useSelector((state) => state.auth.loading)
-  const {user}  = useSelector((state) => state.auth)
+  const {user,message,error}  = useSelector((state) => state.auth)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(Loaduser())
-  },[dispatch])
-  // console.log(isAuthenticated)
+  },[])
+
 
 
 
   return (
     loading ? <Load/> :
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName = {user? "Viewtask" :"Login"} >
+      <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName = {isAuthenticated? "Viewtask" :"Login"} >
         <Stack.Screen  name="Login" component={Login} />
         <Stack.Screen name="Viewtask" component={Viewtask} />
         <Stack.Screen name="Otp" component={Otp} />
-        {/* <Stack.Screen name="Load" component={Load} /> */}
-        {/* <Stack.Screen name="Addtask" component={Addtask} /> */}
+        <Stack.Screen name="Load" component={Load} />
+        <Stack.Screen name="Addtask" component={Addtask} />
         <Stack.Screen name="Profile" component={Profile} />
-        {/* <Stack.Screen name="Changepass" component={Changepass} /> */}
+        <Stack.Screen name="Changepass" component={Changepass} />
       </Stack.Navigator>
     </NavigationContainer>
   );
